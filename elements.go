@@ -41,19 +41,15 @@ func prepareAttributes(attrs []a.Attribute) (string, string, map[string]interfac
 	return templ, defs, data
 }
 
-func insertChildren(indentation string, children ...HTML) string {
+func insertChildren(children ...HTML) string {
 	s := ""
 	for _, c := range children {
-		s += indentOnce(string(c), indentation)
+		s += string(c)
 	}
 	return s
 }
 
-func indentOnce(s, indentation string) string {
-	return strings.Replace(s, "\n", "\n"+indentation, 1)
-}
-
-func indentAll(s, indentation string) string {
+func indent(s, indentation string) string {
 	return strings.Replace(s, "\n", "\n"+indentation, -1)
 }
 
@@ -73,7 +69,7 @@ func buildElement(tag string, attrs []a.Attribute, content string, close_ bool) 
 
 func Element(tag string, attrs []a.Attribute, children ...HTML) HTML {
 	return HTML(buildElement(tag, attrs,
-		insertChildren("  ", children...), true))
+		insertChildren(children...), true))
 }
 
 func VoidElement(tag string, attrs []a.Attribute) HTML {
@@ -111,7 +107,7 @@ func Script(attrs []a.Attribute, js JS) HTML {
 	}
 
 	complTempl := buildElement("script", attrs,
-		indentAll("\n"+js.templ, "  "), true)
+		indent("\n"+js.templ, "  "), true)
 
 	// TODO set verbosity level to enable logging
 	t, err := template.New("_").Delims("{%$", "$%}").Parse(complTempl)
